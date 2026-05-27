@@ -1,7 +1,25 @@
 <x-guest-layout>
-    <div class="bg-white w-full py-6 px-10 shadow-sm">
-        <h1 class="text-2xl font-bold tracking-tighter text-center">
-            <a href="{{ '/' }}"><span class="text-[#002d72]">TIKETKU</span></a>
+    {{-- Header Logo Atas --}}
+    <div class="bg-white w-full py-5 px-10 border-b border-gray-100 shadow-sm">
+        <h1 class="text-xl font-bold tracking-tight">
+            <a href="{{ url('/') }}" class="flex items-center justify-center gap-2.5 group w-fit mx-auto">
+                {{-- Logo Container --}}
+                <div
+                    class="w-9 h-9 bg-gray-900 rounded-xl flex items-center justify-center group-hover:bg-gray-700 transition-colors duration-200 flex-shrink-0">
+                    @if (setting('app_logo'))
+                        <img src="{{ Storage::url(setting('app_logo')) }}" class="w-6 h-6 object-contain" alt="Logo">
+                    @else
+                        <svg class="w-5 h-5 fill-white" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                        </svg>
+                    @endif
+                </div>
+
+                {{-- Nama Aplikasi --}}
+                <span class="text-gray-900 uppercase transition-colors duration-200 group-hover:text-gray-700">
+                    {{ setting('app_name', 'TicketIn') }}
+                </span>
+            </a>
         </h1>
     </div>
 
@@ -9,6 +27,7 @@
 
         <div class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
 
+            {{-- Sisi Kiri: Ilustrasi & Teks Branding --}}
             <div class="hidden md:flex flex-col items-center text-center">
                 <div class="w-full max-w-sm mb-8">
                     <img src="{{ asset('images/gambar-login-register.png') }}" alt="Halo" class="w-full h-auto">
@@ -16,18 +35,19 @@
                 <h2 class="text-xl font-extrabold text-gray-900 mb-4 leading-tight">
                     Jangan khawatir, kami di sini untuk membantu.
                 </h2>
-                <p class="text-gray-500 text-sm px-6">
+                <p class="text-gray-400 text-sm px-6 leading-relaxed">
                     Lupa password adalah hal yang wajar. Masukkan email Anda dan kami akan mengirimkan instruksi untuk
                     mengatur ulang.
                 </p>
             </div>
 
+            {{-- Sisi Kanan: Form Card Lupa Password --}}
             <div class="flex justify-center">
                 <div
-                    class="w-full max-w-md bg-white p-10 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.06)] border border-gray-50">
+                    class="w-full max-w-md bg-white p-10 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.04)] border border-gray-100">
 
                     <h3 class="text-xl font-bold text-gray-900 mb-2 text-center">Lupa Password?</h3>
-                    <p class="text-sm text-gray-500 mb-8 leading-relaxed text-center">
+                    <p class="text-sm text-gray-400 mb-8 leading-relaxed text-center">
                         Masukkan alamat email yang terdaftar dan kami akan mengirimkan tautan reset password.
                     </p>
 
@@ -36,23 +56,26 @@
                     <form method="POST" action="{{ route('password.email') }}">
                         @csrf
 
-                        <div class="mb-8">
-                            <label for="email" class="block text-sm font-medium text-gray-400 mb-2">Alamat
+                        {{-- Email Input --}}
+                        <div class="mb-6">
+                            <label for="email" class="block text-xs font-medium text-gray-500 mb-2">Alamat
                                 Email</label>
-                            <input id="email" type="email" name="email" :value="old('email')" required
+                            <input id="email" type="email" name="email" value="{{ old('email') }}" required
                                 autofocus placeholder="nama@email.com"
-                                class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all outline-none" />
+                                class="w-full h-11 px-4 border border-gray-200 rounded-xl text-sm text-gray-700 placeholder-gray-300 outline-none focus:border-gray-400 transition-all bg-white focus:ring-0" />
                             <x-input-error :messages="$errors->get('email')" class="mt-2" />
                         </div>
 
-                        <div class="space-y-4">
+                        {{-- Action Buttons --}}
+                        <div class="space-y-5">
                             <button type="submit"
-                                class="w-full bg-[#0049cc] hover:bg-[#003da8] text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-100 transition-all transform active:scale-[0.98]">
+                                class="w-full h-12 bg-gray-900 hover:bg-gray-700 text-white font-medium text-sm rounded-xl transition-all shadow-sm active:scale-[0.99]">
                                 Kirim Tautan Reset
                             </button>
 
                             <div class="text-center">
-                                <a href="{{ route('login') }}" class="text-sm text-blue-600 font-bold hover:underline">
+                                <a href="{{ route('login') }}"
+                                    class="text-sm text-gray-500 hover:text-gray-900 font-medium hover:underline transition-colors duration-150">
                                     Kembali ke Halaman Masuk
                                 </a>
                             </div>
