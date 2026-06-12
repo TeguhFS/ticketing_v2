@@ -45,6 +45,8 @@ class OrderController extends Controller
             'pending'   => Order::where('status', 'pending')->count(),
             'paid'      => Order::where('status', 'paid')->count(),
             'cancelled' => Order::where('status', 'cancelled')->count(),
+            'refunded' => Order::where('status', 'refunded')->count(),
+            'expired' => Order::where('status', 'expired')->count(),
         ];
 
         return view('admin.orders.index', compact('orders', 'stats'));

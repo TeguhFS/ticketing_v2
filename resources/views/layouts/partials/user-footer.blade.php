@@ -1,24 +1,24 @@
-<footer class="bg-gray-950 text-gray-400 mt-20">
+<footer class="bg-gray-950 text-gray-400">
 
     {{-- Main Footer --}}
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-        {{-- Grid diatur secara konsisten menjadi 4 kolom pada layar lg --}}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
 
             {{-- Kolom 1: Brand & Deskripsi --}}
             <div>
                 <a href="{{ route('welcome') }}" class="flex items-center gap-2.5 mb-4 group w-fit">
                     <div
-                        class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center
-                        group-hover:bg-white/20 transition-colors duration-200">
+                        class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden bg-gray-900">
+
                         @if (setting('app_logo'))
-                            <img src="{{ Storage::url(setting('app_logo')) }}" class="w-5 h-5 object-contain"
-                                alt="Logo">
+                            <img src="{{ Storage::url(setting('app_logo')) }}" alt="{{ setting('app_name', 'TicketIn') }}"
+                                class="w-full h-full object-cover">
                         @else
                             <svg class="w-5 h-5 fill-white" viewBox="0 0 24 24">
                                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
                             </svg>
                         @endif
+
                     </div>
                     <span class="text-base font-bold text-white">
                         {{ setting('app_name', config('app.name')) }}
@@ -49,7 +49,7 @@
             <div>
                 <p class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Platform</p>
                 <ul class="space-y-2.5">
-                    @foreach ([['route' => 'events.index', 'label' => 'Jelajahi Event'], ['route' => 'blogs.index', 'label' => 'Blog'], ['route' => 'faqs.index', 'label' => 'FAQ'], ['route' => 'welcome', 'label' => 'Tentang Kami']] as $link)
+                    @foreach ([['route' => 'events.index', 'label' => 'Jelajahi Event'], ['route' => 'blogs.index', 'label' => 'Blog'], ['route' => 'faqs.index', 'label' => 'FAQ'], ['route' => 'about.index', 'label' => 'Tentang Kami']] as $link)
                         <li>
                             <a href="{{ route($link['route']) }}"
                                 class="text-sm text-gray-400 hover:text-white transition-colors duration-200
@@ -69,7 +69,7 @@
             <div>
                 <p class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Legal & Bantuan</p>
                 <ul class="space-y-2.5">
-                    @foreach ([['url' => '#', 'label' => 'Kebijakan Privasi'], ['url' => '#', 'label' => 'Syarat & Ketentuan'], ['url' => route('faqs.index'), 'label' => 'Pusat Bantuan'], ['url' => '#', 'label' => 'Kemitraan']] as $legal)
+                    @foreach ([['url' => route('pages.privacy'), 'label' => 'Kebijakan Privasi'], ['url' => route('pages.terms'), 'label' => 'Syarat & Ketentuan'], ['url' => route('faqs.index'), 'label' => 'Pusat Bantuan']] as $legal)
                         <li>
                             <a href="{{ $legal['url'] }}"
                                 class="text-sm text-gray-400 hover:text-white transition-colors duration-200
@@ -146,7 +146,7 @@
                     &copy; {{ date('Y') }} {{ setting('app_name', config('app.name')) }}. All rights reserved.
                 </p>
                 <div class="flex items-center gap-2 text-xs text-gray-600">
-                    <span>Maju Bersama Industri Kreatif</span>
+                    <span>Maju Bersama Industri Kreatif {{ setting('app_name', config('app.name')) }}</span>
                 </div>
             </div>
         </div>

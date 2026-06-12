@@ -43,6 +43,7 @@ class TicketController extends Controller
             'active'    => Ticket::where('status', 'active')->count(),
             'used'      => Ticket::where('status', 'used')->count(),
             'cancelled' => Ticket::where('status', 'cancelled')->count(),
+            'expired' => Ticket::where('status', 'expired')->count(),
         ];
 
         return view('admin.tickets.index', compact('tickets', 'events', 'stats'));

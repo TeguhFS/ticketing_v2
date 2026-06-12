@@ -38,6 +38,7 @@ class EventController extends Controller
             'published' => Event::where('status', 'published')->count(),
             'draft'     => Event::where('status', 'draft')->count(),
             'cancelled' => Event::where('status', 'cancelled')->count(),
+            'completed' => Event::where('status', 'completed')->count(),
         ];
 
         return view('admin.events.index', compact('events', 'categories', 'stats'));

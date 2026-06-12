@@ -76,7 +76,8 @@
                     @if ($payment->verified_at)
                         <div>
                             <p class="text-xs text-gray-400 mb-1">Diverifikasi Oleh</p>
-                            <p class="text-sm text-gray-700">{{ $payment->verifiedBy->name ?? '-' }}</p>
+                            <p class="text-sm text-gray-700">{{ $payment->verifiedBy->name ?? 'System / Midtrans' }}
+                            </p>
                         </div>
                         <div>
                             <p class="text-xs text-gray-400 mb-1">Tanggal Verifikasi</p>
@@ -208,23 +209,101 @@
 
             {{-- User Info --}}
             <div class="bg-white rounded-2xl border border-gray-100 p-5">
-                <p class="text-sm font-semibold text-gray-900 mb-4">Informasi User</p>
-                <div class="flex items-center gap-3 mb-3">
-                    <div
-                        class="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-white text-sm font-semibold">
-                        {{ strtoupper(substr($payment->order->user->name ?? 'U', 0, 2)) }}
+
+                <p class="text-sm font-semibold text-gray-900 mb-4">
+                    Informasi User
+                </p>
+
+                {{-- Header --}}
+                <div class="flex items-center gap-3 mb-5">
+
+                    @if ($payment->order->user->avatar)
+                        <img src="{{ Storage::url($payment->order->user->avatar) }}"
+                            alt="{{ $payment->order->user->name }}"
+                            class="w-12 h-12 rounded-full object-cover border border-gray-100">
+                    @else
+                        <div
+                            class="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center text-white text-sm font-semibold">
+                            {{ strtoupper(substr($payment->order->user->name, 0, 2)) }}
+                        </div>
+                    @endif
+
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold text-gray-900">
+                            {{ $payment->order->user->name }}
+                        </p>
+                        <p class="text-xs text-gray-400 truncate">
+                            {{ $payment->order->user->email }}
+                        </p>
                     </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-900">{{ $payment->order->user->name ?? '-' }}</p>
-                        <p class="text-xs text-gray-400">{{ $payment->order->user->email ?? '-' }}</p>
+
+                    <div class="ml-auto">
+                        <span
+                            class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium
+                {{ $payment->order->user->is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600' }}">
+                            {{ $payment->order->user->is_active ? 'Aktif' : 'Nonaktif' }}
+                        </span>
                     </div>
+
                 </div>
-                @if ($payment->order->user->phone)
-                    <div class="flex items-center gap-2 text-sm text-gray-500 mt-2">
-                        <i class="ti ti-phone text-gray-300"></i>
-                        {{ $payment->order->user->phone }}
+
+                {{-- Detail --}}
+                <div class="space-y-3 text-sm">
+
+                    <div class="flex items-start gap-3">
+                        <i class="ti ti-mail text-gray-300 text-base mt-0.5"></i>
+                        <span class="text-gray-600">
+                            {{ $payment->order->user->email }}
+                        </span>
                     </div>
-                @endif
+
+                    @if ($payment->order->user->phone)
+                        <div class="flex items-start gap-3">
+                            <i class="ti ti-phone text-gray-300 text-base mt-0.5"></i>
+                            <span class="text-gray-600">
+                                {{ $payment->order->user->phone }}
+                            </span>
+                        </div>
+                    @endif
+
+                    @if ($payment->order->user->gender)
+                        <div class="flex items-start gap-3">
+                            <i class="ti ti-user text-gray-300 text-base mt-0.5"></i>
+                            <span class="text-gray-600">
+                                {{ $payment->order->user->gender === 'male' ? 'Laki-laki' : 'Perempuan' }}
+                            </span>
+                        </div>
+                    @endif
+
+                    @if ($payment->order->user->birth_date)
+                        <div class="flex items-start gap-3">
+                            <i class="ti ti-calendar text-gray-300 text-base mt-0.5"></i>
+                            <span class="text-gray-600">
+                                {{ $payment->order->user->birth_date->format('d M Y') }}
+                            </span>
+                        </div>
+                    @endif
+
+                    @if ($payment->order->user->id_card_number)
+                        <div class="flex items-start gap-3">
+                            <i class="ti ti-id text-gray-300 text-base mt-0.5"></i>
+                            <span class="text-gray-600 font-mono">
+                                {{ $payment->order->user->id_card_number }}
+                            </span>
+                        </div>
+                    @endif
+
+                    @if ($payment->order->user->address)
+                        <div class="flex items-start gap-3">
+                            <i class="ti ti-map-pin text-gray-300 text-base mt-0.5"></i>
+                            <span class="text-gray-600 leading-relaxed">
+                                {{ $payment->order->user->address }}
+                            </span>
+                        </div>
+                    @endif
+
+                </div>
+
             </div>
 
             {{-- Bank Account Info --}}

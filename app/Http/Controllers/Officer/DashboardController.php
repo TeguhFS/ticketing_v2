@@ -12,21 +12,28 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $user      = Auth::user();
-        $officers  = FieldOfficer::with('event.ticketTypes')
+        $user = Auth::user();
+
+        // Tambahkan whereHas('event') agar petugas tanpa event tidak ikut ditarik
+        $officers = FieldOfficer::with('event.ticketTypes')
             ->where('user_id', $user->id)
             ->where('is_active', true)
+            ->whereHas('event') // <── Tambahkan pengunci keamanan ini
             ->get();
 
         // Stats per event yang ditugaskan
         $eventStats = $officers->map(function ($officer) use ($user) {
-            $event       = $officer->event;
-            $totalQuota  = $event->ticketTypes->sum('quota');
-            $totalSold   = $event->ticketTypes->sum('sold');
+            $event = $officer->event;
+
+            // Sekarang baris di bawah ini 100% aman dari error null
+            $totalQuota   = $event->ticketTypes->sum('quota');
+            $totalSold    = $event->ticketTypes->sum('sold');
+
             $totalScanned = TicketValidation::where('validated_by', $user->id)
                 ->whereHas('ticket.ticketType', fn($q) => $q->where('event_id', $event->id))
                 ->where('status', 'valid')
                 ->count();
+
             $totalActive = Ticket::whereHas('ticketType', fn($q) => $q->where('event_id', $event->id))
                 ->where('status', 'active')
                 ->count();

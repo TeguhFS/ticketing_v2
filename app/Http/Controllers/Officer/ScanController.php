@@ -8,17 +8,22 @@ use App\Models\Ticket;
 use App\Models\TicketValidation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ScanController extends Controller
 {
     public function index()
     {
-        $user    = Auth::user();
-        $events  = FieldOfficer::with('event')
-            ->where('user_id', $user->id)
+        $user = Auth::user();
+
+        // Perbaikan: Gunakan whereHas agar data officer yang event-nya sudah dihapus TIDAK ikut ketarik
+        $events = FieldOfficer::where('user_id', $user->id)
             ->where('is_active', true)
+            ->whereHas('event') // Memastikan relasi event-nya ada di database
+            ->with('event')
             ->get()
-            ->pluck('event');
+            ->pluck('event')
+            ->filter(); // Membuang nilai null jika entah bagaimana masih lolos
 
         return view('officer.scan', compact('events'));
     }
@@ -53,9 +58,9 @@ class ScanController extends Controller
             ->first();
 
         if (!$ticket) {
-            // Simpan log invalid
+            // Simpan log invalid (menggunakan null atau id aman)
             TicketValidation::create([
-                'ticket_id'    => 0,
+                'ticket_id'    => null, // Disarankan pakai null jika schema membolehkan nullable, atau biarkan 0
                 'validated_by' => $user->id,
                 'ticket_code'  => $ticketCode,
                 'status'       => 'invalid',
@@ -72,7 +77,7 @@ class ScanController extends Controller
 
         // Cek sudah digunakan
         if ($ticket->status === 'used') {
-            $lastValidation = $ticket->validations()->latest()->first();
+            $lastValidation = $ticket->validations()->where('status', 'valid')->latest()->first();
 
             TicketValidation::create([
                 'ticket_id'    => $ticket->id,
@@ -88,9 +93,9 @@ class ScanController extends Controller
                 'message'      => 'Tiket ini sudah digunakan!',
                 'code'         => $ticketCode,
                 'holder'       => $ticket->holder_name,
-                'event'        => $ticket->ticketType->event->title,
+                'event'        => $ticket->ticketType->event->title ?? '-',
                 'ticket_type'  => $ticket->ticketType->name,
-                'used_at'      => $lastValidation?->validated_at?->format('d M Y, H:i'),
+                'used_at'      => $lastValidation?->validated_at?->format('d M Y, H:i') ?? now()->format('d M Y, H:i'),
             ]);
         }
 
@@ -103,17 +108,21 @@ class ScanController extends Controller
             ]);
         }
 
-        // Valid — update status tiket & simpan validasi
-        $ticket->update(['status' => 'used']);
+        DB::transaction(function () use ($ticket, $user, $ticketCode) {
+            // Valid — update status tiket & simpan validasi
+            $ticket->update([
+                'status' => 'used'
+            ]);
 
-        TicketValidation::create([
-            'ticket_id'    => $ticket->id,
-            'validated_by' => $user->id,
-            'ticket_code'  => $ticketCode,
-            'status'       => 'valid',
-            'notes'        => 'Tiket berhasil divalidasi',
-            'validated_at' => now(),
-        ]);
+            TicketValidation::create([
+                'ticket_id'    => $ticket->id,
+                'validated_by' => $user->id,
+                'ticket_code'  => $ticketCode,
+                'status'       => 'valid',
+                'notes'        => 'Tiket berhasil divalidasi',
+                'validated_at' => now(),
+            ]);
+        });
 
         return response()->json([
             'status'      => 'valid',
@@ -121,7 +130,7 @@ class ScanController extends Controller
             'code'        => $ticketCode,
             'holder'      => $ticket->holder_name,
             'email'       => $ticket->holder_email,
-            'event'       => $ticket->ticketType->event->title,
+            'event'       => $ticket->ticketType->event->title ?? '-',
             'ticket_type' => $ticket->ticketType->name,
             'scanned_at'  => now()->format('d M Y, H:i'),
         ]);

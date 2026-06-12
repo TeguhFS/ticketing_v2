@@ -2,8 +2,8 @@
     <x-slot name="title">Tickets</x-slot>
 
     {{-- Stats --}}
-    <div class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
-        @foreach ([['label' => 'Total Tiket', 'value' => $stats['total'], 'icon' => 'ti-ticket', 'color' => 'bg-gray-900'], ['label' => 'Active', 'value' => $stats['active'], 'icon' => 'ti-circle-check', 'color' => 'bg-emerald-500'], ['label' => 'Used', 'value' => $stats['used'], 'icon' => 'ti-scan', 'color' => 'bg-blue-500'], ['label' => 'Cancelled', 'value' => $stats['cancelled'], 'icon' => 'ti-circle-x', 'color' => 'bg-red-500']] as $stat)
+    <div class="grid grid-cols-2 xl:grid-cols-5 gap-4 mb-6">
+        @foreach ([['label' => 'Total Tiket', 'value' => $stats['total'], 'icon' => 'ti-ticket', 'color' => 'bg-gray-900'], ['label' => 'Active', 'value' => $stats['active'], 'icon' => 'ti-circle-check', 'color' => 'bg-emerald-500'], ['label' => 'Used', 'value' => $stats['used'], 'icon' => 'ti-scan', 'color' => 'bg-blue-500'], ['label' => 'Cancelled', 'value' => $stats['cancelled'], 'icon' => 'ti-circle-x', 'color' => 'bg-red-500'], ['label' => 'expired', 'value' => $stats['expired'], 'icon' => 'ti-clock-off', 'color' => 'bg-gray-500']] as $stat)
             <div class="bg-white rounded-2xl border border-gray-100 p-5">
                 <div class="flex items-center justify-between mb-3">
                     <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">{{ $stat['label'] }}</p>

@@ -74,6 +74,32 @@
         </div>
     @endif
 
+    {{-- Expired Today Alert --}}
+    @if ($expiredOrders > 0 || $expiredTickets > 0)
+        <div class="flex flex-wrap gap-3 mb-6">
+            @if ($expiredOrders > 0)
+                <div
+                    class="flex items-center gap-2 bg-gray-50 border border-gray-200
+        text-gray-600 text-sm px-4 py-2.5 rounded-xl">
+                    <i class="ti ti-clock-off text-base text-gray-400"></i>
+                    <span>
+                        <strong>{{ $expiredOrders }}</strong> order expired hari ini
+                    </span>
+                </div>
+            @endif
+            @if ($expiredTickets > 0)
+                <div
+                    class="flex items-center gap-2 bg-gray-50 border border-gray-200
+        text-gray-600 text-sm px-4 py-2.5 rounded-xl">
+                    <i class="ti ti-ticket-off text-base text-gray-400"></i>
+                    <span>
+                        <strong>{{ $expiredTickets }}</strong> tiket expired hari ini
+                    </span>
+                </div>
+            @endif
+        </div>
+    @endif
+
     {{-- Chart & Upcoming Events --}}
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-6">
 

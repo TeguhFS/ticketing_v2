@@ -11,14 +11,65 @@
                 class="inline-flex items-center gap-2 h-9 px-4 border border-gray-200 text-gray-600 text-sm rounded-xl hover:bg-gray-50 transition">
                 <i class="ti ti-edit text-base"></i> Edit
             </a>
-            <form action="{{ route('admin.events.destroy', $event) }}" method="POST"
-                onsubmit="return confirm('Hapus event ini? Tindakan ini tidak dapat dibatalkan.')">
-                @csrf @method('DELETE')
-                <button type="submit"
+            <div x-data="{ deleteModal: false }">
+                <button type="button" @click="deleteModal = true"
                     class="inline-flex items-center gap-2 h-9 px-4 bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl hover:bg-red-100 transition">
-                    <i class="ti ti-trash text-base"></i> Hapus
+                    <i class="ti ti-trash text-base"></i>
+                    Hapus
                 </button>
-            </form>
+
+                <div x-show="deleteModal" x-cloak class="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+
+                    {{-- Backdrop --}}
+                    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="deleteModal = false">
+                    </div>
+
+                    {{-- Modal --}}
+                    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 z-10 text-center"
+                        x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-200"
+                        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95">
+
+                        {{-- Icon --}}
+                        <div
+                            class="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500 border border-red-100">
+                            <i class="ti ti-alert-triangle text-xl"></i>
+                        </div>
+
+                        {{-- Title --}}
+                        <h3 class="text-base font-semibold text-gray-900 mb-1">
+                            Hapus Event?
+                        </h3>
+
+                        {{-- Description --}}
+                        <p class="text-sm text-gray-500 mb-6">
+                            Apakah Anda yakin ingin menghapus event
+                            <span class="font-medium text-gray-800">
+                                "{{ $event->title }}"
+                            </span>?
+                            Tindakan ini tidak dapat dibatalkan.
+                        </p>
+
+                        {{-- Buttons --}}
+                        <div class="flex gap-3">
+                            <button type="button" @click="deleteModal = false"
+                                class="flex-1 h-10 border border-gray-100 text-gray-500 text-sm rounded-xl hover:bg-gray-50 transition font-medium">
+                                Batal
+                            </button>
+
+                            <form action="{{ route('admin.events.destroy', $event) }}" method="POST" class="flex-1">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                    class="w-full h-10 bg-red-600 text-white text-sm rounded-xl hover:bg-red-700 transition font-medium">
+                                    Ya, Hapus
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -56,11 +107,12 @@
                                 {{ $event->status }}
                             </span>
                             @if ($event->is_featured)
-                                <span class="text-xs font-medium px-2.5 py-1 rounded-lg bg-gray-900 text-white">
-                                    <i class="ti ti-star-filled text-xs"></i> Featured
+                                <span class="text-xs font-medium px-2.5 py-1 rounded-lg bg-amber-400 text-amber-900">
+                                    <i class="ti ti-star text-xs"></i> Featured
                                 </span>
                             @endif
-                            <span class="text-xs text-gray-400">{{ $event->category->name ?? '-' }}</span>
+                            <span
+                                class="text-xs px-2.5 py-1 rounded-lg bg-gray-400 text-white">{{ $event->category->name ?? '-' }}</span>
                         </div>
                         <h1 class="text-lg font-bold text-gray-900 mb-3">{{ $event->title }}</h1>
                         <div class="flex flex-wrap gap-4 text-sm text-gray-500">

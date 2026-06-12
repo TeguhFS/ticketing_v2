@@ -51,23 +51,14 @@
                     <div class="flex items-center gap-4 py-3 border-b border-gray-50 last:border-0">
                         <div
                             class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0
-                    {{ $validation->status === 'valid'
-                        ? 'bg-emerald-100'
-                        : ($validation->status === 'invalid'
-                            ? 'bg-red-100'
-                            : 'bg-amber-100') }}">
+                            {{ $validation->status === 'valid' ? 'bg-emerald-100' : ($validation->status === 'invalid' ? 'bg-red-100' : 'bg-amber-100') }}">
                             <i
-                                class="ti text-sm
-                        {{ $validation->status === 'valid'
-                            ? 'ti-check text-emerald-600'
-                            : ($validation->status === 'invalid'
-                                ? 'ti-x text-red-500'
-                                : 'ti-clock text-amber-600') }}"></i>
+                                class="ti text-sm {{ $validation->status === 'valid' ? 'ti-check text-emerald-600' : ($validation->status === 'invalid' ? 'ti-x text-red-500' : 'ti-clock text-amber-600') }}"></i>
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="text-xs font-mono text-gray-600">{{ $validation->ticket_code }}</p>
                             <p class="text-sm text-gray-700 mt-0.5 truncate">
-                                {{ $validation->ticket->ticketType->event->title ?? '-' }}
+                                {{ $validation->ticket?->ticketType?->event?->title ?? 'Event Tidak Tersedia' }}
                             </p>
                         </div>
                         <div class="text-right flex-shrink-0">
@@ -130,9 +121,7 @@
                     </span>
                     <span
                         class="text-xs font-medium px-2.5 py-1 rounded-lg border
-                    {{ $officer->is_active
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                        : 'bg-gray-100 text-gray-400 border-gray-200' }}">
+                        {{ $officer->is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-gray-100 text-gray-400 border-gray-200' }}">
                         {{ $officer->is_active ? 'Aktif' : 'Nonaktif' }}
                     </span>
                 </div>
@@ -144,31 +133,44 @@
                 </div>
             </div>
 
-            {{-- Event Info --}}
+            {{-- Event Info (Sudah Diberi Proteksi Pengecekan Null) --}}
             <div class="bg-white rounded-2xl border border-gray-100 p-5">
                 <p class="text-sm font-semibold text-gray-900 mb-4">Informasi Event</p>
-                <div class="space-y-3">
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Nama Event</p>
-                        <p class="text-sm font-medium text-gray-900">{{ $officer->event->title ?? '-' }}</p>
+
+                @if ($officer->event)
+                    <div class="space-y-3">
+                        <div>
+                            <p class="text-xs text-gray-400 mb-1">Nama Event</p>
+                            <p class="text-sm font-medium text-gray-900">{{ $officer->event->title }}</p>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Lokasi</span>
+                            <span class="text-gray-700">{{ $officer->event->location ?? '-' }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Tanggal</span>
+                            <span
+                                class="text-gray-700">{{ $officer->event->start_date?->format('d M Y') ?? '-' }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Status Event</span>
+                            <span class="text-gray-700 capitalize">{{ $officer->event->status ?? '-' }}</span>
+                        </div>
+                        <a href="{{ route('admin.events.show', $officer->event) }}"
+                            class="flex items-center justify-center gap-2 h-9 border border-gray-100 text-gray-500 text-xs rounded-xl hover:bg-gray-50 transition mt-2">
+                            <i class="ti ti-external-link text-sm"></i> Lihat Detail Event
+                        </a>
                     </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-400">Lokasi</span>
-                        <span class="text-gray-700">{{ $officer->event->location ?? '-' }}</span>
+                @else
+                    <div class="text-center py-6">
+                        <div
+                            class="w-10 h-10 bg-red-50 text-red-500 rounded-xl flex items-center justify-center mx-auto mb-2.5">
+                            <i class="ti ti-alert-triangle text-lg"></i>
+                        </div>
+                        <p class="text-sm font-medium text-red-600">Event Telah Dihapus</p>
+                        <p class="text-xs text-gray-400 mt-0.5">Petugas ini kehilangan tautan data event master.</p>
                     </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-400">Tanggal</span>
-                        <span class="text-gray-700">{{ $officer->event->start_date?->format('d M Y') ?? '-' }}</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-400">Status Event</span>
-                        <span class="text-gray-700 capitalize">{{ $officer->event->status ?? '-' }}</span>
-                    </div>
-                    <a href="{{ route('admin.events.show', $officer->event) }}"
-                        class="flex items-center justify-center gap-2 h-9 border border-gray-100 text-gray-500 text-xs rounded-xl hover:bg-gray-50 transition mt-2">
-                        <i class="ti ti-external-link text-sm"></i> Lihat Detail Event
-                    </a>
-                </div>
+                @endif
             </div>
 
             {{-- Edit Form --}}
@@ -227,5 +229,4 @@
         </div>
 
     </div>
-
 </x-app-layout>

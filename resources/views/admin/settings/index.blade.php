@@ -97,35 +97,57 @@
                     <div class="space-y-5">
 
                         {{-- Logo --}}
-                        <div x-data="imagePreview('{{ $settings['app_logo']->value ? Storage::url($settings['app_logo']->value) : '' }}')">
-                            <label class="text-xs font-medium text-gray-500 block mb-3">Logo Aplikasi</label>
+                        <div x-data="imagePreview('{{ isset($settings['app_logo']) && $settings['app_logo']->value ? Storage::url($settings['app_logo']->value) : '' }}')">
+
+                            <label class="text-xs font-medium text-gray-500 block mb-3">
+                                Logo Aplikasi
+                            </label>
+
                             <div class="border-2 border-dashed border-gray-200 rounded-2xl overflow-hidden cursor-pointer hover:border-gray-300 transition h-32 flex items-center justify-center bg-gray-50"
                                 @click="$refs.logoInput.click()">
-                                <img x-show="preview" :src="preview"
-                                    class="max-h-24 max-w-full object-contain p-3" alt="">
-                                <div x-show="!preview" class="text-center">
-                                    <i class="ti ti-photo text-3xl text-gray-200 block mb-1.5"></i>
-                                    <p class="text-xs text-gray-400">Upload logo</p>
-                                    <p class="text-xs text-gray-300 mt-0.5">PNG, SVG, WEBP</p>
-                                </div>
+
+                                <template x-if="preview">
+                                    <img :src="preview" class="max-h-24 max-w-full object-contain p-3">
+                                </template>
+
+                                <template x-if="!preview">
+                                    <div class="text-center">
+                                        <i class="ti ti-photo text-3xl text-gray-200 block mb-1.5"></i>
+                                        <p class="text-xs text-gray-400">Upload logo</p>
+                                        <p class="text-xs text-gray-300 mt-0.5">PNG, SVG, WEBP</p>
+                                    </div>
+                                </template>
+
                             </div>
+
                             <input type="file" name="app_logo" accept="image/*" x-ref="logoInput"
                                 @change="showPreview($event)" class="hidden">
                         </div>
 
                         {{-- Favicon --}}
-                        <div x-data="imagePreview('{{ $settings['app_favicon']->value ? Storage::url($settings['app_favicon']->value) : '' }}')">
-                            <label class="text-xs font-medium text-gray-500 block mb-3">Favicon</label>
+                        <div x-data="imagePreview('{{ isset($settings['app_favicon']) && $settings['app_favicon']->value ? Storage::url($settings['app_favicon']->value) : '' }}')">
+
+                            <label class="text-xs font-medium text-gray-500 block mb-3">
+                                Favicon
+                            </label>
+
                             <div class="border-2 border-dashed border-gray-200 rounded-2xl overflow-hidden cursor-pointer hover:border-gray-300 transition h-24 flex items-center justify-center bg-gray-50"
                                 @click="$refs.favInput.click()">
-                                <img x-show="preview" :src="preview" class="w-12 h-12 object-contain"
-                                    alt="">
-                                <div x-show="!preview" class="text-center">
-                                    <i class="ti ti-photo text-2xl text-gray-200 block mb-1"></i>
-                                    <p class="text-xs text-gray-400">Upload favicon</p>
-                                    <p class="text-xs text-gray-300 mt-0.5">ICO, PNG max 512KB</p>
-                                </div>
+
+                                <template x-if="preview">
+                                    <img :src="preview" class="w-12 h-12 object-contain">
+                                </template>
+
+                                <template x-if="!preview">
+                                    <div class="text-center">
+                                        <i class="ti ti-photo text-2xl text-gray-200 block mb-1"></i>
+                                        <p class="text-xs text-gray-400">Upload favicon</p>
+                                        <p class="text-xs text-gray-300 mt-0.5">ICO, PNG max 512KB</p>
+                                    </div>
+                                </template>
+
                             </div>
+
                             <input type="file" name="app_favicon" accept="image/*" x-ref="favInput"
                                 @change="showPreview($event)" class="hidden">
                         </div>
@@ -272,26 +294,31 @@
 
                     {{-- Right: OG Image --}}
                     <div>
-                        <div x-data="imagePreview('{{ $settings['seo_og_image']->value ? Storage::url($settings['seo_og_image']->value) : '' }}')">
+                        <div x-data="imagePreview('{{ isset($settings['seo_og_image']) && $settings['seo_og_image']->value ? Storage::url($settings['seo_og_image']->value) : '' }}')">
+
                             <label class="text-xs font-medium text-gray-500 block mb-3">
                                 OG Image
-                                <span class="text-gray-400 font-normal">(Social Share Image)</span>
                             </label>
+
                             <div class="border-2 border-dashed border-gray-200 rounded-2xl overflow-hidden cursor-pointer hover:border-gray-300 transition aspect-video flex items-center justify-center bg-gray-50"
                                 @click="$refs.ogInput.click()">
-                                <img x-show="preview" :src="preview" class="w-full h-full object-cover"
-                                    alt="">
-                                <div x-show="!preview" class="text-center p-4">
-                                    <i class="ti ti-photo text-3xl text-gray-200 block mb-2"></i>
-                                    <p class="text-xs text-gray-400">Upload OG Image</p>
-                                    <p class="text-xs text-gray-300 mt-1">1200 × 630px disarankan</p>
-                                </div>
+
+                                <template x-if="preview">
+                                    <img :src="preview" class="w-full h-full object-cover">
+                                </template>
+
+                                <template x-if="!preview">
+                                    <div class="text-center p-4">
+                                        <i class="ti ti-photo text-3xl text-gray-200 block mb-2"></i>
+                                        <p class="text-xs text-gray-400">Upload OG Image</p>
+                                        <p class="text-xs text-gray-300 mt-1">1200 × 630px disarankan</p>
+                                    </div>
+                                </template>
+
                             </div>
+
                             <input type="file" name="seo_og_image" accept="image/*" x-ref="ogInput"
                                 @change="showPreview($event)" class="hidden">
-                            <p class="text-xs text-gray-400 mt-2">
-                                Gambar yang tampil saat link dibagikan di media sosial.
-                            </p>
                         </div>
                     </div>
 

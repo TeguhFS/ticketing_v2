@@ -16,7 +16,7 @@
 
     {{-- Stats --}}
     <div class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
-        @foreach ([['label' => 'Pending', 'value' => $stats['pending'], 'icon' => 'ti-clock', 'color' => 'bg-amber-500'], ['label' => 'Verified', 'value' => $stats['verified'], 'icon' => 'ti-circle-check', 'color' => 'bg-emerald-500'], ['label' => 'Rejected', 'value' => $stats['rejected'], 'icon' => 'ti-circle-x', 'color' => 'bg-red-500'], ['label' => 'Expired', 'value' => $stats['expired'], 'icon' => 'ti-clock-off', 'color' => 'bg-gray-400']] as $stat)
+        @foreach ([['label' => 'Pending', 'value' => $stats['pending'], 'icon' => 'ti-clock', 'color' => 'bg-amber-500'], ['label' => 'Verified', 'value' => $stats['verified'], 'icon' => 'ti-circle-check', 'color' => 'bg-emerald-500'], ['label' => 'Rejected', 'value' => $stats['rejected'], 'icon' => 'ti-circle-x', 'color' => 'bg-red-500'], ['label' => 'Expired', 'value' => $stats['expired'], 'icon' => 'ti-clock-off', 'color' => 'bg-gray-500']] as $stat)
             <div class="bg-white rounded-2xl border border-gray-100 p-5">
                 <div class="flex items-center justify-between mb-3">
                     <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">{{ $stat['label'] }}</p>
@@ -124,7 +124,15 @@
                                 <div class="flex items-center gap-2">
                                     <div
                                         class="w-7 h-7 rounded-full bg-gray-900 flex items-center justify-center text-white text-[10px] font-semibold flex-shrink-0">
-                                        {{ strtoupper(substr($payment->order->user->name ?? 'U', 0, 2)) }}
+                                        @if ($payment->order->user->avatar)
+                                            <img src="{{ Storage::url($payment->order->user->avatar) }}"
+                                                class="w-9 h-9 rounded-full object-cover flex-shrink-0" alt="">
+                                        @else
+                                            <div
+                                                class="w-9 h-9 rounded-full bg-gray-900 flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
+                                                {{ strtoupper(substr($payment->order->user->name, 0, 2)) }}
+                                            </div>
+                                        @endif
                                     </div>
                                     <div>
                                         <p class="text-sm font-medium text-gray-800 leading-tight">

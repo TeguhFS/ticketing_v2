@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 // Controller Admin
@@ -16,6 +15,11 @@ use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\FieldOfficerController as AdminFieldOfficerController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
+use App\Http\Controllers\Admin\PageController as AdminPageController;
+use App\Http\Controllers\Admin\AboutController as AdminAboutController;
+use App\Http\Controllers\Admin\RefundController as AdminRefundController;
+use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
+use App\Http\Controllers\Admin\SearchController as AdminSearchController;
 
 // Controller Officer
 use App\Http\Controllers\Officer\AuthController as OfficerAuthController;
@@ -24,19 +28,76 @@ use App\Http\Controllers\Officer\HistoryController as OfficerHistoryController;
 use App\Http\Controllers\Officer\ProfileController as OfficerProfileController;
 use App\Http\Controllers\Officer\ScanController as OfficerScanController;
 
-// Route Public
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
-Route::get('/events', [\App\Http\Controllers\User\EventController::class, 'index'])->name('events.index');
-Route::get('/blogs', [\App\Http\Controllers\User\BlogController::class, 'index'])->name('blogs.index');
-Route::get('/faqs', [\App\Http\Controllers\User\FaqController::class, 'index'])->name('faqs.index');
+// User Controller
+use App\Http\Controllers\User\HomeController;
+use App\Http\Controllers\User\EventController;
+use App\Http\Controllers\User\CheckoutController;
+use App\Http\Controllers\User\BlogController;
+use App\Http\Controllers\User\FaqController;
+use App\Http\Controllers\User\DashboardController;
+use App\Http\Controllers\User\TicketController;
+use App\Http\Controllers\User\OrderController;
+use App\Http\Controllers\User\PageController;
+use App\Http\Controllers\User\AboutController;
+use App\Http\Controllers\User\RefundController;
+use App\Http\Controllers\ProfileController;
 
-// ─── User Authenticated Routes ────────────────────────────────────
-Route::middleware(['auth', 'verified'])->prefix('user')->name('user.')->group(function () {
-    Route::get('/dashboard', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/tickets', [\App\Http\Controllers\User\TicketController::class, 'index'])->name('tickets');
-    Route::get('/orders', [\App\Http\Controllers\User\OrderController::class, 'index'])->name('orders');
+// Midtrans Webhook
+Route::post('/midtrans/notification', [CheckoutController::class, 'notification'])->name('midtrans.notification');
+
+// Public Routes
+Route::get('/', [HomeController::class, 'index'])->name('welcome');
+
+// Checkout
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/events/{event:slug}/checkout', [CheckoutController::class, 'index'])->name('events.checkout');
+    Route::post('/events/{event:slug}/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('/checkout/finish', [CheckoutController::class, 'finish'])->name('checkout.finish');
+});
+
+// Event
+Route::get('/events', [EventController::class, 'index'])->name('events.index');
+Route::get('/events/{event:slug}', [EventController::class, 'show'])->name('events.show');
+
+// Blog and FAQ
+Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index');
+Route::get('/blogs/{blog:slug}', [BlogController::class, 'show'])->name('blogs.show');
+Route::get('/faqs', [FaqController::class, 'index'])->name('faqs.index');
+
+// Privacy Terms
+Route::get('/kebijakan-privasi', [PageController::class, 'privacy'])->name('pages.privacy');
+Route::get('/syarat-ketentuan',  [PageController::class, 'terms'])->name('pages.terms');
+Route::get('/pages/{page:slug}', [PageController::class, 'show'])->name('pages.show');
+
+// About
+Route::get('/tentang-kami', [AboutController::class, 'index'])->name('about.index');
+
+// User Authenticated Routes
+Route::middleware(['auth', 'verified', 'check.expired.order'])->prefix('user')->name('user.')->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Orders
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+
+    // Tickets
+    Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
+    Route::get('/tickets/{ticket}', [TicketController::class, 'show'])->name('tickets.show');
+
+    // Refunds
+    Route::get('/refunds', [RefundController::class, 'index'])->name('refunds.index');
+    Route::get('/refunds/{refund}', [RefundController::class, 'show'])->name('refunds.show');
+    Route::get('/orders/{order}/refund', [RefundController::class, 'create'])->name('refunds.create');
+    Route::post('/orders/{order}/refund', [RefundController::class, 'store'])->name('refunds.store');
+
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar');
+    Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 // Route untuk Admin
@@ -79,6 +140,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::patch('/{payment}/reject', [AdminPaymentController::class, 'reject'])->name('reject');
     });
 
+    // Refunds
+    Route::resource('refunds', AdminRefundController::class)->only(['index', 'show']);
+    Route::patch('/refunds/{refund}/approve', [AdminRefundController::class, 'approve'])->name('refunds.approve');
+    Route::patch('/refunds/{refund}/reject',  [AdminRefundController::class, 'reject'])->name('refunds.reject');
+
     // Blog
     Route::resource('blogs', AdminBlogController::class);
 
@@ -88,6 +154,16 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::put('/faqs/{faq}', [AdminFaqController::class, 'update'])->name('faqs.update');
     Route::delete('/faqs/{faq}', [AdminFaqController::class, 'destroy'])->name('faqs.destroy');
     Route::post('/faqs/reorder', [AdminFaqController::class, 'reorder'])->name('faqs.reorder');
+
+    // About
+    Route::get('/about', [AdminAboutController::class, 'index'])->name('about.index');
+    Route::put('/{about}', [AdminAboutController::class, 'update'])->name('about.update');
+    Route::put('/{about}/items', [AdminAboutController::class, 'updateItems'])->name('about.items');
+    Route::patch('/{about}/toggle', [AdminAboutController::class, 'toggleActive'])->name('about.toggle');
+    Route::post('/reorder', [AdminAboutController::class, 'reorder'])->name('about.reorder');
+
+    // Page
+    Route::resource('pages', AdminPageController::class);
 
     // Users
     Route::resource('users', AdminUserController::class);
@@ -107,9 +183,21 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::patch('/social', [AdminSettingController::class, 'updateSocial'])->name('social.update');
         Route::patch('/seo', [AdminSettingController::class, 'updateSeo'])->name('seo.update');
     });
+
+    // Notifications
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', [AdminNotificationController::class, 'index'])->name('index');
+        Route::get('/unread', [AdminNotificationController::class, 'unread'])->name('unread');
+        Route::patch('/read', [AdminNotificationController::class, 'markAsRead'])->name('read');
+        Route::delete('/{id}', [AdminNotificationController::class, 'destroy'])->name('destroy');
+        Route::delete('/', [AdminNotificationController::class, 'destroyAll'])->name('destroyAll');
+    });
+
+    // Global Search
+    Route::get('/search', AdminSearchController::class)->name('search');
 });
 
-// ─── Officer Routes ───────────────────────────────────────────────
+// Officer Routes
 Route::prefix('officer')->name('officer.')->group(function () {
 
     // Auth
@@ -126,13 +214,6 @@ Route::prefix('officer')->name('officer.')->group(function () {
         Route::get('/profile',  [OfficerProfileController::class, 'index'])->name('profile');
         Route::patch('/profile',  [OfficerProfileController::class, 'update'])->name('profile.update');
     });
-});
-
-// Route untuk User biasa
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 require __DIR__ . '/auth.php';

@@ -170,7 +170,15 @@
                                 <div class="flex items-center gap-2">
                                     <div
                                         class="w-7 h-7 rounded-full bg-gray-900 flex items-center justify-center text-white text-[10px] font-semibold flex-shrink-0">
-                                        {{ strtoupper(substr($trx->order->user->name ?? 'U', 0, 2)) }}
+                                        @if ($trx->order->user->avatar)
+                                            <img src="{{ Storage::url($trx->order->user->avatar) }}"
+                                                class="w-9 h-9 rounded-full object-cover flex-shrink-0" alt="">
+                                        @else
+                                            <div
+                                                class="w-9 h-9 rounded-full bg-gray-900 flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
+                                                {{ strtoupper(substr($trx->order->user->name, 0, 2)) }}
+                                            </div>
+                                        @endif
                                     </div>
                                     <div>
                                         <p class="text-sm font-medium text-gray-800">
@@ -193,7 +201,7 @@
                                 Rp {{ number_format($trx->total_paid, 0, ',', '.') }}
                             </td>
                             <td class="px-5 py-3.5 text-xs text-gray-500">
-                                {{ $trx->verifiedBy->name ?? '-' }}
+                                {{ $trx->verifiedBy->name ?? 'System / Midtrans' }}
                             </td>
                             <td class="px-5 py-3.5 text-xs text-gray-400">
                                 {{ $trx->verified_at?->format('d M Y') }}<br>

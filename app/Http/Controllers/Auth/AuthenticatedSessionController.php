@@ -25,6 +25,22 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
+
+        if (!Auth::user()->is_active) {
+            $email = Auth::user()->email;
+
+            Auth::logout();
+
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')
+                ->withInput(['email' => $email])
+                ->withErrors([
+                    'email' => 'Akun Anda telah dinonaktifkan. Silakan hubungi admin.',
+                ]);
+        }
+
         $request->session()->regenerate();
 
         return match (Auth::user()->role) {

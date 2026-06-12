@@ -31,10 +31,16 @@
 
         {{-- Logo --}}
         <div class="text-center mb-8">
-            <div class="w-14 h-14 bg-gray-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <svg class="w-7 h-7 fill-white" viewBox="0 0 24 24">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                </svg>
+            <div
+                class="w-14 h-14 bg-gray-900 rounded-2xl flex items-center justify-center mx-auto mb-4 flex-shrink-0 overflow-hidden">
+                @if (setting('app_logo'))
+                    <img src="{{ Storage::url(setting('app_logo')) }}" alt="{{ setting('app_name', 'TicketIn') }}"
+                        class="w-full h-full object-cover">
+                @else
+                    <svg class="w-5 h-5 fill-white" viewBox="0 0 24 24">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                    </svg>
+                @endif
             </div>
             {{-- Menggunakan Nama Aplikasi Dinamis dari Setting --}}
             <h1 class="text-xl font-bold text-gray-900">{{ setting('app_name', 'TicketIn') }} Officer</h1>

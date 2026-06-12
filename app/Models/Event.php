@@ -12,7 +12,7 @@ class Event extends Model
 
     protected $fillable = [
         'category_id',
-        'user_id',       // admin yang membuat event
+        'user_id',
         'title',
         'slug',
         'description',

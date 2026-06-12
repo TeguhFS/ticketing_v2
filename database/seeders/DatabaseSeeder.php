@@ -39,6 +39,12 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             SettingSeeder::class,
+            PageSeeder::class,
+            AboutSectionSeeder::class,
+            CategorySeeder::class,
+            EventSeeder::class,
+            BlogSeeder::class,
+            FaqSeeder::class,
         ]);
     }
 }

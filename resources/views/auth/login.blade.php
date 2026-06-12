@@ -5,14 +5,17 @@
             <a href="{{ url('/') }}" class="flex items-center justify-center gap-2.5 group w-fit mx-auto">
                 {{-- Logo Container --}}
                 <div
-                    class="w-9 h-9 bg-gray-900 rounded-xl flex items-center justify-center group-hover:bg-gray-700 transition-colors duration-200 flex-shrink-0">
+                    class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden bg-gray-900">
+
                     @if (setting('app_logo'))
-                        <img src="{{ Storage::url(setting('app_logo')) }}" class="w-6 h-6 object-contain" alt="Logo">
+                        <img src="{{ Storage::url(setting('app_logo')) }}" alt="{{ setting('app_name', 'TicketIn') }}"
+                            class="w-full h-full object-cover">
                     @else
                         <svg class="w-5 h-5 fill-white" viewBox="0 0 24 24">
                             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
                         </svg>
                     @endif
+
                 </div>
 
                 {{-- Nama Aplikasi --}}

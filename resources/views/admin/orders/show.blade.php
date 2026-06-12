@@ -35,6 +35,28 @@
                     </span>
                 </div>
 
+                @if ($order->status === 'cancelled' && $order->notes)
+                    <div class="bg-red-50 border border-red-200 rounded-2xl p-5 mb-3">
+                        <div class="flex items-start gap-3">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-red-100 text-red-600
+                flex items-center justify-center flex-shrink-0">
+                                <i class="ti ti-alert-circle text-lg"></i>
+                            </div>
+
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-red-700">
+                                    Alasan Pembatalan
+                                </p>
+
+                                <p class="text-sm text-red-600 mt-2 leading-relaxed">
+                                    {{ $order->notes }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 {{-- Items --}}
                 <div class="space-y-3 mb-5">
                     @foreach ($order->orderItems as $item)
@@ -120,23 +142,100 @@
 
             {{-- User Info --}}
             <div class="bg-white rounded-2xl border border-gray-100 p-5">
-                <p class="text-sm font-semibold text-gray-900 mb-4">Informasi Pemesan</p>
-                <div class="flex items-center gap-3 mb-4">
-                    <div
-                        class="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-white text-sm font-semibold">
-                        {{ strtoupper(substr($order->user->name, 0, 2)) }}
+
+                <p class="text-sm font-semibold text-gray-900 mb-4">
+                    Informasi Pemesan
+                </p>
+
+                {{-- Header --}}
+                <div class="flex items-center gap-3 mb-5">
+
+                    @if ($order->user->avatar)
+                        <img src="{{ Storage::url($order->user->avatar) }}" alt="{{ $order->user->name }}"
+                            class="w-12 h-12 rounded-full object-cover border border-gray-100">
+                    @else
+                        <div
+                            class="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center text-white text-sm font-semibold">
+                            {{ strtoupper(substr($order->user->name, 0, 2)) }}
+                        </div>
+                    @endif
+
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold text-gray-900">
+                            {{ $order->user->name }}
+                        </p>
+                        <p class="text-xs text-gray-400 truncate">
+                            {{ $order->user->email }}
+                        </p>
                     </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-900">{{ $order->user->name }}</p>
-                        <p class="text-xs text-gray-400">{{ $order->user->email }}</p>
+
+                    <div class="ml-auto">
+                        <span
+                            class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium
+                {{ $order->user->is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600' }}">
+                            {{ $order->user->is_active ? 'Aktif' : 'Nonaktif' }}
+                        </span>
                     </div>
+
                 </div>
-                @if ($order->user->phone)
-                    <div class="flex items-center gap-2 text-sm text-gray-500">
-                        <i class="ti ti-phone text-gray-300 text-base"></i>
-                        {{ $order->user->phone }}
+
+                {{-- Detail --}}
+                <div class="space-y-3 text-sm">
+
+                    <div class="flex items-start gap-3">
+                        <i class="ti ti-mail text-gray-300 text-base mt-0.5"></i>
+                        <span class="text-gray-600">
+                            {{ $order->user->email }}
+                        </span>
                     </div>
-                @endif
+
+                    @if ($order->user->phone)
+                        <div class="flex items-start gap-3">
+                            <i class="ti ti-phone text-gray-300 text-base mt-0.5"></i>
+                            <span class="text-gray-600">
+                                {{ $order->user->phone }}
+                            </span>
+                        </div>
+                    @endif
+
+                    @if ($order->user->gender)
+                        <div class="flex items-start gap-3">
+                            <i class="ti ti-user text-gray-300 text-base mt-0.5"></i>
+                            <span class="text-gray-600">
+                                {{ $order->user->gender === 'male' ? 'Laki-laki' : 'Perempuan' }}
+                            </span>
+                        </div>
+                    @endif
+
+                    @if ($order->user->birth_date)
+                        <div class="flex items-start gap-3">
+                            <i class="ti ti-calendar text-gray-300 text-base mt-0.5"></i>
+                            <span class="text-gray-600">
+                                {{ $order->user->birth_date->format('d M Y') }}
+                            </span>
+                        </div>
+                    @endif
+
+                    @if ($order->user->id_card_number)
+                        <div class="flex items-start gap-3">
+                            <i class="ti ti-id text-gray-300 text-base mt-0.5"></i>
+                            <span class="text-gray-600 font-mono">
+                                {{ $order->user->id_card_number }}
+                            </span>
+                        </div>
+                    @endif
+
+                    @if ($order->user->address)
+                        <div class="flex items-start gap-3">
+                            <i class="ti ti-map-pin text-gray-300 text-base mt-0.5"></i>
+                            <span class="text-gray-600 leading-relaxed">
+                                {{ $order->user->address }}
+                            </span>
+                        </div>
+                    @endif
+
+                </div>
+
             </div>
 
             {{-- Payment Info --}}

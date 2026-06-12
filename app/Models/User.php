@@ -104,4 +104,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Payment::class, 'verified_by');
     }
+
+    public function refund()
+    {
+        return $this->hasMany(Refund::class);
+    }
 }

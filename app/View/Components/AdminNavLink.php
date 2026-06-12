@@ -12,7 +12,7 @@ class AdminNavLink extends Component
     public string $label;
     public int $badge;
     public string $badgeColor;
-    public ?bool $active; // Tambahkan properti ini (boleh null)
+    public ?bool $active;
 
     public function __construct(
         string $route,

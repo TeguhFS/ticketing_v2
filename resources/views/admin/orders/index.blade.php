@@ -2,8 +2,8 @@
     <x-slot name="title">Order</x-slot>
 
     {{-- Stats --}}
-    <div class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
-        @foreach ([['label' => 'Total Order', 'value' => $stats['total'], 'icon' => 'ti-shopping-cart', 'color' => 'bg-gray-900'], ['label' => 'Pending', 'value' => $stats['pending'], 'icon' => 'ti-clock', 'color' => 'bg-amber-500'], ['label' => 'Paid', 'value' => $stats['paid'], 'icon' => 'ti-circle-check', 'color' => 'bg-emerald-500'], ['label' => 'Cancelled', 'value' => $stats['cancelled'], 'icon' => 'ti-circle-x', 'color' => 'bg-red-500']] as $stat)
+    <div class="grid grid-cols-2 xl:grid-cols-6 gap-4 mb-6">
+        @foreach ([['label' => 'Total Order', 'value' => $stats['total'], 'icon' => 'ti-shopping-cart', 'color' => 'bg-gray-900'], ['label' => 'Pending', 'value' => $stats['pending'], 'icon' => 'ti-clock', 'color' => 'bg-amber-500'], ['label' => 'Paid', 'value' => $stats['paid'], 'icon' => 'ti-circle-check', 'color' => 'bg-emerald-500'], ['label' => 'Cancelled', 'value' => $stats['cancelled'], 'icon' => 'ti-circle-x', 'color' => 'bg-red-500'], ['label' => 'expired', 'value' => $stats['expired'], 'icon' => 'ti-clock-off', 'color' => 'bg-gray-500'], ['label' => 'refunded', 'value' => $stats['refunded'], 'icon' => 'ti-arrow-back-up', 'color' => 'bg-orange-500']] as $stat)
             <div class="bg-white rounded-2xl border border-gray-100 p-5">
                 <div class="flex items-center justify-between mb-3">
                     <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">{{ $stat['label'] }}</p>
@@ -89,7 +89,15 @@
                                 <div class="flex items-center gap-2">
                                     <div
                                         class="w-7 h-7 rounded-full bg-gray-900 flex items-center justify-center text-white text-[10px] font-semibold flex-shrink-0">
-                                        {{ strtoupper(substr($order->user->name, 0, 2)) }}
+                                        @if ($order->user->avatar)
+                                            <img src="{{ Storage::url($order->user->avatar) }}"
+                                                class="w-9 h-9 rounded-full object-cover flex-shrink-0" alt="">
+                                        @else
+                                            <div
+                                                class="w-9 h-9 rounded-full bg-gray-900 flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
+                                                {{ strtoupper(substr($order->user->name, 0, 2)) }}
+                                            </div>
+                                        @endif
                                     </div>
                                     <div>
                                         <p class="text-sm text-gray-800 font-medium leading-tight">

@@ -45,6 +45,16 @@ class Order extends Model
         return $this->hasOne(Payment::class);
     }
 
+    public function refund()
+    {
+        return $this->hasOne(Refund::class);
+    }
+
+    public function hasRefundRequest(): bool
+    {
+        return $this->refund()->exists();
+    }
+
     public function isPaid(): bool
     {
         return $this->status === 'paid';

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('fee', 12, 2)->default(0);
             $table->decimal('total_paid', 12, 2);
             $table->enum('status', ['pending', 'verified', 'rejected', 'expired'])->default('pending');
-            $table->string('proof_image')->nullable(); // bukti transfer
+            $table->string('proof_image')->nullable();
             $table->text('notes')->nullable();
             $table->foreignId('verified_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('verified_at')->nullable();

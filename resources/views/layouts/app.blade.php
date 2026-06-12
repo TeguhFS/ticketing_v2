@@ -39,8 +39,6 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
     {{-- Kustom Global CSS --}}
     <style>
         [x-cloak] {
@@ -52,6 +50,8 @@
             border-radius: 0.75rem !important;
         }
     </style>
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="font-sans antialiased bg-gray-50">
@@ -75,6 +75,7 @@
     </div>
 
     {{-- Rich Text Editor Asset --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.tiny.cloud/1/wrfpceqzzwpscmo22iq176ivyidwj2pn3xaxy22trgbj1vwp/tinymce/6/tinymce.min.js"
         referrerpolicy="origin"></script>
     @stack('scripts')
