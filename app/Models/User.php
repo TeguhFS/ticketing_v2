@@ -109,4 +109,23 @@ class User extends Authenticatable
     {
         return $this->hasMany(Refund::class);
     }
+
+    // Relasi Bioskop
+
+    public function cinemaOrders()
+    {
+        return $this->hasMany(CinemaOrder::class);
+    }
+
+    public function cinemaTickets()
+    {
+        return $this->hasMany(CinemaTicket::class);
+    }
+
+    public function lockedSeats()
+    {
+        return $this->hasMany(ShowtimeSeat::class, 'locked_by_user_id')
+            ->where('status', 'locked')
+            ->where('locked_until', '>', now());
+    }
 }
